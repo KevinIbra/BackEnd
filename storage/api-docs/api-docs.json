@@ -1,0 +1,70 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Craft API Documentation",
+        "description": "API documentation for Craft application",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/v1": {},
+        "/api/v1/barang-unggahan": {
+            "get": {
+                "tags": [
+                    "Barang Unggahan"
+                ],
+                "summary": "Get list of Barang Unggahan",
+                "description": "Returns list of Barang Unggahan",
+                "operationId": "getBarangUnggahanList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/api/v1/ide-kerajinan": {
+            "get": {
+                "tags": [
+                    "Ide Kerajinan"
+                ],
+                "summary": "Get list of Ide Kerajinan",
+                "description": "Returns list of Ide Kerajinan",
+                "operationId": "getIdeKerajinanList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/api/v1/tutorial": {
+            "get": {
+                "tags": [
+                    "Tutorial"
+                ],
+                "summary": "Get list of Tutorials",
+                "description": "Returns list of Tutorials",
+                "operationId": "getTutorialList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Barang Unggahan",
+            "description": "Barang Unggahan"
+        },
+        {
+            "name": "Ide Kerajinan",
+            "description": "Ide Kerajinan"
+        },
+        {
+            "name": "Tutorial",
+            "description": "Tutorial"
+        }
+    ]
+}

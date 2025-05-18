@@ -12,24 +12,20 @@ class IdeKerajinan extends Model
     protected $table = 'ide_kerajinans';
 
     protected $fillable = [
-        'id_ide',
         'judul',
         'bahan_dibutuhkan',
-        'tingkat_kesulitan'
+        'tingkat_kesulitan',
+        'deskripsi',
+        'gambar'
     ];
-
-    public function favorits()
-    {
-        return $this->hasMany(Favorit::class, 'id_ide', 'id');
-    }
 
     public function barangUnggahan()
     {
-        return $this->hasMany(Barang_Unggahan::class, 'id_barang', 'id');
+        return $this->hasMany(BarangUnggahan::class);
     }
 
-    public function analisisAi()
+    public function tutorial()
     {
-        return $this->hasMany(Analisis_Ai::class, 'id_barang', 'id');
+        return $this->hasOne(Tutorial::class);
     }
 }

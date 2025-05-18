@@ -6,53 +6,62 @@ use App\Models\Barang_Unggahan;
 use App\Models\BarangUnggahan;
 use Illuminate\Http\Request;
 
+/**
+ * @OA\Info(
+ *      version="1.0.0",
+ *      title="Craft API Documentation",
+ *      description="API documentation for Craft application"
+ * )
+ *
+ * @OA\PathItem(
+ *      path="/api/v1"
+ * )
+ */
 class BarangUnggahanController extends Controller
 {
+    /**
+     * @OA\Get(
+     *      path="/api/v1/barang-unggahan",
+     *      operationId="getBarangUnggahanList",
+     *      tags={"Barang Unggahan"},
+     *      summary="Get list of Barang Unggahan",
+     *      description="Returns list of Barang Unggahan",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation"
+     *      )
+     * )
+     */
     public function index()
     {
-        $barangUnggahan = Barang_Unggahan::with(['user', 'ide'])->get();
+        $barangUnggahan = BarangUnggahan::paginate(10); // 10 items per page
         return response()->json($barangUnggahan);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'id_pengguna' => 'required|exists:users,id',
-            'id_ide' => 'required|exists:ide_kerajinans,id',
+        $validated = $request->validate([
+            'nama_barang' => 'required|string|max:255',
             'deskripsi' => 'required|string',
-            'foto' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'tanggal_unggah' => 'required|date'
+            'foto' => 'required|image',
         ]);
 
-        // Handle file upload
-        if ($request->hasFile('foto')) {
-            $file = $request->file('foto');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads/barang_unggahan'), $fileName);
-            
-            $barangUnggahan = Barang_Unggahan::create([
-                'id_pengguna' => $request->id_pengguna,
-                'id_ide' => $request->id_ide,
-                'deskripsi' => $request->deskripsi,
-                'foto' => 'uploads/barang_unggahan/' . $fileName,
-                'tanggal_unggah' => $request->tanggal_unggah
-            ]);
+        $path = $request->file('foto')->store('uploads', 'public');
+        $validated['foto'] = $path;
 
-            return response()->json($barangUnggahan, 201);
-        }
-
-        return response()->json(['message' => 'No file uploaded'], 400);
+        $barangUnggahan = BarangUnggahan::create($validated);
+        return response()->json($barangUnggahan, 201);
     }
 
     public function show($id)
     {
-        $barangUnggahan = Barang_Unggahan::with(['user', 'ide'])->findOrFail($id);
+        $barangUnggahan = BarangUnggahan::with('ideKerajinan')->findOrFail($id);
         return response()->json($barangUnggahan);
     }
 
     public function update(Request $request, $id)
     {
-        $barangUnggahan = Barang_Unggahan::findOrFail($id);
+        $barangUnggahan = BarangUnggahan::findOrFail($id);
         
         $request->validate([
             'id_pengguna' => 'exists:users,id',
@@ -82,7 +91,7 @@ class BarangUnggahanController extends Controller
 
     public function destroy($id)
     {
-        $barangUnggahan = Barang_Unggahan::findOrFail($id);
+        $barangUnggahan = BarangUnggahan::findOrFail($id);
         
         // Delete file
         if (file_exists(public_path($barangUnggahan->foto))) {

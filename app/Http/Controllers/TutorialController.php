@@ -5,12 +5,30 @@ namespace App\Http\Controllers;
 use App\Models\Tutorial;
 use Illuminate\Http\Request;
 
+/**
+ * @OA\Get(
+ *      path="/api/v1/tutorial",
+ *      operationId="getTutorialList",
+ *      tags={"Tutorial"},
+ *      summary="Get list of Tutorials",
+ *      description="Returns list of Tutorials",
+ *      @OA\Response(
+ *          response=200,
+ *          description="Successful operation"
+ *      )
+ * )
+ */
 class TutorialController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $tutorials = Tutorial::with('ideKerajinan')->get();
-        return response()->json($tutorials);
+        $query = Tutorial::query();
+
+        if ($request->has('sort_by')) {
+            $query->orderBy($request->sort_by, $request->get('order', 'asc'));
+        }
+
+        return response()->json($query->paginate(10));
     }
 
     public function store(Request $request)

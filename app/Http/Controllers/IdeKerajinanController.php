@@ -5,12 +5,34 @@ namespace App\Http\Controllers;
 use App\Models\IdeKerajinan;
 use Illuminate\Http\Request;
 
+/**
+ * @OA\Get(
+ *      path="/api/v1/ide-kerajinan",
+ *      operationId="getIdeKerajinanList",
+ *      tags={"Ide Kerajinan"},
+ *      summary="Get list of Ide Kerajinan",
+ *      description="Returns list of Ide Kerajinan",
+ *      @OA\Response(
+ *          response=200,
+ *          description="Successful operation"
+ *      )
+ * )
+ */
 class IdeKerajinanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $ideKerajinan = IdeKerajinan::all();
-        return response()->json($ideKerajinan);
+        $query = IdeKerajinan::query();
+
+        if ($request->has('search')) {
+            $query->where('judul', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->has('kategori')) {
+            $query->where('kategori', $request->kategori);
+        }
+
+        return response()->json($query->paginate(10));
     }
 
     public function store(Request $request)
